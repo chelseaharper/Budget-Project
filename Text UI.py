@@ -81,7 +81,8 @@ def transaction_test():
                 3: "Add a recurring transaction",
                 4: "Add new category",
                 5: "Display transactions",
-                6: "Exit program"})
+                6: "Run Cash Flow Report",
+                7: "Exit program"})
         if action == "Create a new account":
             name = input(str("Enter the name of your account. "))
             main = Account(name)
@@ -174,6 +175,12 @@ def transaction_test():
             start = input(str("Enter the start date of the time frame. (mm-dd-yyyy) "))
             end = input(str("Enter the end date of the time frame. (mm-dd-yyyy) "))
             main.ledger.display(
+                datetime.datetime.strptime(start, "%m-%d-%Y"),
+                datetime.datetime.strptime(end, "%m-%d-%Y"), main)
+        elif action  == "Run Cash Flow Report":
+            start = input(str("Enter the start date of the time frame. (mm-dd-yyyy) "))
+            end = input(str("Enter the end date of the time frame. (mm-dd-yyyy) "))
+            create_cash_flow(
                 datetime.datetime.strptime(start, "%m-%d-%Y"),
                 datetime.datetime.strptime(end, "%m-%d-%Y"), main)
         elif action == "Exit program":

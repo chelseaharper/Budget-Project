@@ -210,13 +210,23 @@ class Ledger:
         self.transactions = []
         self.balance: Decimal = 0
     
-    def display(self, range_start, range_end, account):
+    def coalate_transactions(self, range_start, range_end, account):
         full_transactions = self.transactions
         for i in account.schedules:
             instances = i.get_transactions(range_start, range_end)
-            full_transactions.extend(instances)
+            for instance in instances:
+                if instance in full_transactions:
+                    pass
+                else:
+                    full_transactions.append(instance)
         full_transactions.sort(key=lambda r: r.date)
-        print(Ledger.str(self, full_transactions))
+        return full_transactions
+
+    def display(self, range_start, range_end, account):
+        print(Ledger.str(
+            self,
+            self.coalate_transactions(range_start, range_end, account)))
+
     
     def update_balance(self, transaction):
         self.balance += transaction.get_amount()
@@ -229,7 +239,7 @@ class Ledger:
             balance = "$ " + "{:.2f}".format(self.update_balance(i))
             line = [str(i), balance.rjust(18, " ")]
             elements.append("  ".join(line))
-        total = item_spacing("\nBalance:", " ", 70, str(
+        total = item_spacing("\nBalance:", " ", 72, str(
             "$ " + "{:.2f}".format(self.get_balance())))
         elements.append(total)
         display = "\n".join(elements)
@@ -387,22 +397,22 @@ class Category:
 # misc = Category("Miscellaneous")
 
 
-# def save_budget(file_name):
-#     full_ledger = {}
-#     for i in Category.categories:
-#         full_ledger[i.expense_type] = i.ledger
-#     save_file = open(f"{file_name}.json", "w")
-#     json.dump(full_ledger, save_file)
-#     save_file.close()
+def save_budget(file_name):
+    full_ledger = {}
+    for i in Category.categories:
+        full_ledger[i.expense_type] = i.ledger
+    save_file = open(f"{file_name}.json", "w")
+    json.dump(full_ledger, save_file)
+    save_file.close()
 
 
-# def load_budget(file_name):
-#     load_file = open(f"{file_name}.json", "r")
-#     data = json.load(load_file)
-#     Category.categories.clear()
-#     for category in data:
-#         cat = Category(category)
-#         cat.ledger = data[category]
+def load_budget(file_name):
+    load_file = open(f"{file_name}.json", "r")
+    data = json.load(load_file)
+    Category.categories.clear()
+    for category in data:
+        cat = Category(category)
+        cat.ledger = data[category]
 
 
 def head_spacing(name, symbol, length):
