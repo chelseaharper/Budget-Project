@@ -48,7 +48,7 @@ class Transaction:
             date: date = datetime.date.today()):
 
         if type(date) == str:
-            self.date = datetime.datetime.strptime(date, "%m-%d-%Y")
+            self.date = datetime.datetime.strptime(date, "%m-%d-%Y").date()
         else:
             self.date = date
         self.amount = amount
@@ -92,83 +92,55 @@ class Frequency(ABC):
             reference_date: date):
         pass
 
-
-class Monthly(Frequency):
-    
     def daterange(start_date, end_date):
-        for n in range(int((end_date - start_date).days)):
+        for n in range(int((end_date - start_date).days) + 1):
             yield start_date + timedelta(n)
+
+
+class Monthly(Frequency): 
     
-    def get_occurrences(
+    def get_occurrences(self,
             range_start: date,
             range_end: date,
-            reference_date: date,
-            interval = 30):
+            reference_date: date):
         day = reference_date.day
         dates = []
-        if range_start == range_end:
-            if range_start.day == day:
-                occurrence = datetime.date(range_start.year, range_start.month, day)
-                dates.append(occurrence)
-        elif range_start > range_end:
-            pass
-        else:
-            for single_date in Monthly.daterange(range_start, range_end):
-                if single_date.day == day:
-                    dates.append(single_date)
+        for single_date in Frequency.daterange(range_start, range_end):
+            if single_date.day == day:
+                dates.append(single_date)
         return dates
 
 
 
 class Yearly(Frequency):
-    def daterange(start_date, end_date):
-        for n in range(int((end_date - start_date).days)):
-            yield start_date + timedelta(n)
     
-    def get_occurrences(
+    def get_occurrences(self,
             range_start: date,
             range_end: date,
-            reference_date: date,
-            interval = 365):
+            reference_date: date):
         month = reference_date.month
         day = reference_date.day
         dates = []
-        if range_start == range_end:
-            if range_start.day == day and range_start.month == month:
-                occurrence = datetime.date(range_start.year, month, day)
-                dates.append(occurrence)
-        elif range_start > range_end:
-            pass
-        else:
-            for single_date in Yearly.daterange(range_start, range_end):
-                if single_date.day == day and single_date.month == month:
-                    dates.append(single_date)
+        for single_date in Frequency.daterange(range_start, range_end):
+            if single_date.day == day and single_date.month == month:
+                dates.append(single_date)
         return dates
 
 
 class Regularly(Frequency):
-    def daterange(start_date, end_date):
-        for n in range(int((end_date - start_date).days)):
-            yield start_date + timedelta(n)
-    
-    def get_occurrences(
+
+    def __init__(self, interval):
+        self.interval = interval
+
+    def get_occurrences(self, 
             range_start: date,
             range_end: date,
-            reference_date: date,
-            interval):
-        day = reference_date.day
+            reference_date: date):
         dates = []
-        if range_start == range_end:
-            if range_start.day == day:
-                occurrence = datetime.date(range_start.year, range_start.month, day)
-                dates.append(occurrence)
-        elif range_start > range_end:
-            pass
-        else:
-            for single_date in Regularly.daterange(range_start, range_end):
-                separation = single_date - reference_date
-                if separation.days % interval == 0:
-                    dates.append(single_date)
+        for single_date in Frequency.daterange(range_start, range_end):
+            separation = single_date - reference_date
+            if separation.days % self.interval == 0:
+                dates.append(single_date)
         return dates
 
 
@@ -178,22 +150,16 @@ class TransactionSchedule:
             template: Transaction,
             start_date: date,
             end_date: Optional[date],
-            frequency: Frequency = Monthly,
-            interval = 0):
+            frequency: Frequency = Monthly()):
         self.template = template
         self.start_date = start_date
         self.end_date = end_date
         self.frequency = frequency
-        self.interval = interval
+        self.last_run = datetime.datetime.strptime("01-01-1900", "%m-%d-%Y").date()
 
     def get_transactions(self, range_start, range_end):
         reference = self.start_date
-        interval = self.interval
-        if self.frequency == Regularly:
-            dates = self.frequency.get_occurrences(
-                range_start, range_end, reference, interval)
-        else:
-            dates = self.frequency.get_occurrences(
+        dates = self.frequency.get_occurrences(
                 range_start, range_end, reference)
         sched_transactions = []
         for date in dates:
@@ -213,12 +179,17 @@ class Ledger:
     def coalate_transactions(self, range_start, range_end, account):
         full_transactions = self.transactions
         for i in account.schedules:
-            instances = i.get_transactions(range_start, range_end)
+            if range_start < i.last_run:
+                start = i.last_run + timedelta(1)
+            else:
+                start = range_start
+            instances = i.get_transactions(start, range_end)
             for instance in instances:
                 if instance in full_transactions:
                     pass
                 else:
                     full_transactions.append(instance)
+            i.last_run = range_end
         full_transactions.sort(key=lambda r: r.date)
         return full_transactions
 
@@ -227,7 +198,10 @@ class Ledger:
             self,
             self.coalate_transactions(range_start, range_end, account)))
 
-    
+    def update_transaction(self, trans, att, value):
+        if trans in self.transactions:
+            trans[att] = value
+
     def update_balance(self, transaction):
         self.balance += transaction.get_amount()
         return self.balance

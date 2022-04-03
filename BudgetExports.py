@@ -20,10 +20,21 @@ def create_cash_flow(start, end, account, initial=0):
     ws['D2'] = initial
 
     data = account.ledger.coalate_transactions(start, end, account)
-    for row in range(1, len(data)):
-        for col in range(0, 3):
-            _ = ws.cell(column = col, row = row, value = "")
     for i in data:
-        pass
+        a = 'A' + str(3 + data.index(i))
+        b = 'B' + str(3 + data.index(i))
+        c = 'C' + str(3 + data.index(i))
+        d = 'D' + str(3 + data.index(i))
+        ws[a] = i.date
+        ws[b] = i.description
+        ws[c] = i.amount
+        if data.index(i) == 0:
+            balance = i.amount
+        else:
+            balance += i.amount
+        ws[d] = balance
     wb.save(filename = dest_filename)
+
+def category_spending(start, end, account, initial=0):
+    pass
 
