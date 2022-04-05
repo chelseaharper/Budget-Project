@@ -9,9 +9,7 @@ from typing import List, Optional
 from decimal import Decimal
 from abc import ABC, abstractmethod
 from copy import copy
-#import psycopg2
-
-
+import psycopg2
 
 class Account:
     def __init__(self, name: str):
