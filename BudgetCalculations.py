@@ -11,6 +11,15 @@ from abc import ABC, abstractmethod
 from copy import copy
 import psycopg2
 
+default_categories = [
+                    "Food",
+                    "Transportation",
+                    "Clothing",
+                    "Entertainment",
+                    "Household",
+                    "Debts",
+                    "Pets"]
+
 class Account:
     def __init__(self, name: str):
          self.ledger = Ledger(name)
