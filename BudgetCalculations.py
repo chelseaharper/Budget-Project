@@ -64,7 +64,7 @@ class Transaction:
 
     def __str__(self):
         transaction_date = self.date.strftime("%m-%d-%Y")
-        transaction_amount = "$ " + "{:.2f}".format(self.amount)
+        transaction_amount = "{:.2f}".format(self.amount)
         if len(transaction_amount) > 14:
             transaction_amount = "Too Large."
         name = self.description
@@ -217,11 +217,11 @@ class Ledger:
         header = head_spacing(self.name, "*", 70)
         elements = [header]
         for i in transactions:
-            balance = "$ " + "{:.2f}".format(self.update_balance(i))
+            balance = "{:.2f}".format(self.update_balance(i))
             line = [str(i), balance.rjust(18, " ")]
             elements.append("  ".join(line))
         total = item_spacing("\nBalance:", " ", 72, str(
-            "$ " + "{:.2f}".format(self.get_balance())))
+            "{:.2f}".format(self.get_balance())))
         elements.append(total)
         display = "\n".join(elements)
         return display
@@ -235,13 +235,6 @@ class Ledger:
         self.transactions.append(transaction)
         if amount < 0:
             account.update_category_spending(category.name, amount)
-
-    def add_scheduled_transaction():
-        pass
-
-    def get_transactions_in_range(
-            self, start_date: date, end_date: date) -> List[Transaction]:
-        pass
 
     def compare(self, other: Ledger):
         pass

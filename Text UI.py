@@ -189,9 +189,11 @@ def transaction_test():
         elif action  == "Run Cash Flow Report":
             start = input(str("Enter the start date of the time frame. (mm-dd-yyyy) "))
             end = input(str("Enter the end date of the time frame. (mm-dd-yyyy) "))
+            initial = input(str("Enter the starting balance of the account: "))
+            initial_amount = Decimal(initial)
             create_cash_flow(
                 datetime.datetime.strptime(start, "%m-%d-%Y").date(),
-                datetime.datetime.strptime(end, "%m-%d-%Y").date(), main)
+                datetime.datetime.strptime(end, "%m-%d-%Y").date(), main, initial_amount)
         elif action == "Exit program":
             exit = True
 

@@ -29,7 +29,7 @@ def create_cash_flow(start, end, account, initial=0):
         ws[b] = i.description
         ws[c] = i.amount
         if data.index(i) == 0:
-            balance = i.amount
+            balance = initial + i.amount
         else:
             balance += i.amount
         ws[d] = balance

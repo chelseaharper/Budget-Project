@@ -1,5 +1,51 @@
 Program to manage personal budgets with quickbooks style evaluation.
 
+Program Design:
+-------------------------------------------------------------------------------------------
+TRANSACTION CLASS
+A type of object that takes an amount, a description, a budget category, and a date and stores that data.
+
+Knows about Categories (no other program specific items)
+
+Used by Ledgers, possibly Budgets (If budgets exist)
+-------------------------------------------------------------------------------------------
+ACCOUNT CLASS
+A type of object that takes a name and generates a Ledger. Contains a root category and a list of Transaction Schedules.
+
+Knows about Ledgers, Categories, and TransactionSchedules (Will know about Budgets if Budgets exist)
+
+Used by nothing
+-------------------------------------------------------------------------------------------
+TRANSACTIONSCHEDULE CLASS
+A type of object that takes a transaction as template, a start date, and end date, and a frequency. Stores that information as a blueprint for generating transactions within the account class list. Each schedule maintains a last run date
+
+Knows about Transactions and Frequencies (Frequencies are a trait of Transaction Schedules despite being defined as separate classes)
+
+Used by Accounts
+-------------------------------------------------------------------------------------------
+CATEGORY CLASS
+A type of object that takes a name, goal, and parent and stores that information.
+
+Knows about nothing
+
+Used by Transactions and Accounts
+-------------------------------------------------------------------------------------------
+LEDGER CLASS
+A type of object which takes a name. It stores a balance and a list of transactions.
+
+Knows about Transactions
+
+Used by Accounts
+-------------------------------------------------------------------------------------------
+BUDGET CLASS
+***Class proposed, not yet implemented. Under evaluation***
+A type of object similar to the Ledger class; may be a subclass. Would know about Categories and possibly Frequencies. Would store a list of transactions, but would also maintain a list of categories associated with various spending goals. All transactions would be treated as scheduled transactions.
+
+Would know about Categories, Transactions, and Frequencies
+
+Would be used by Accounts, maybe Ledgers? (if not used by Ledgers, would use Ledgers)
+-------------------------------------------------------------------------------------------
+
 Project goals:
 1. Track balance of accounts and spending trends over time
 2. Run predictive cash flow analysis using future expenses and deposits
