@@ -9,7 +9,6 @@ from typing import List, Optional
 from decimal import Decimal
 from abc import ABC, abstractmethod
 from copy import copy
-import psycopg2
 
 default_categories = [
                     "Food",
@@ -180,9 +179,18 @@ class Ledger:
 
     def __init__(self, name: str):
         self.name = name
+        self.ledger_id = ""
         self.transactions = []
         self.balance: Decimal = 0
     
+    def get_transactions():
+        # conn = sqlite3.connect("books.db")
+        # cur = conn.cursor()
+        # cur.execute("SELECT * FROM book")
+        # rows = cur.fetchall()
+        # conn.close()
+        pass
+
     def coalate_transactions(self, range_start, range_end, account):
         full_transactions = self.transactions
         for i in account.schedules:

@@ -1,5 +1,8 @@
 Program to manage personal budgets with quickbooks style evaluation.
 
+Requirements :
+Clarify if special events need to be in their own category or be alone
+
 Program Design:
 -------------------------------------------------------------------------------------------
 TRANSACTION CLASS

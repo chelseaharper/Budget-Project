@@ -1,18 +1,23 @@
 #New budget UI
 #Icon attributed to freepik
 
+from asyncio.windows_events import NULL
 from tkinter import ttk
 from venv import create
 import BudgetCalculations
 import BudgetExports
+import BudgetDatabaseCommands
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import font
 import datetime
 from decimal import Decimal
+import psycopg2
 
 accounts = []
+
+
 
 window = Tk()
 
@@ -40,6 +45,7 @@ def item_created(item):
             cat = []
             for i in accounts[0].root_category.children:
                 cat.append(i.name)
+                BudgetDatabaseCommands.category_insert(i.name, 0, accounts[0].name)
             categories = "\n".join(cat)
             message = item + fill_text + categories
             messagebox.showinfo(head, message)
@@ -68,6 +74,7 @@ def new_account_window():
     def create_account():
         global accounts
         account = BudgetCalculations.Account(account_name.get())
+        BudgetDatabaseCommands.account_insert(account_name.get())
         accounts.append(account)
         item_created("Account")
         name_field.delete(0, END)
@@ -454,27 +461,5 @@ cash_flow_menu.add_command(label="Modify Cash Flow", command=new_budget_window)
 cash_flow_menu.add_command(label="Export to Excel", command=new_budget_window)
 
 file_open_frame = Frame(base_frame, width=450, height=450, bg="white")
-
-# win_label = Label(window, text="Welcome to Budget Manager!")
-# win_label.grid(row=0, column=1)
-
-# new_account = Button(window, text="Create New Account", width=17, command=new_account_window)
-# new_account.grid(row=1, column=0)
-
-# new_ledger = Button(window, text="Create Ledger", width=17, command=new_ledger_window)
-# new_ledger.grid(row=2, column=0)
-
-# open_ledger = Button(window, text="Open Ledger", width=17, command=select_ledger)
-# open_ledger.grid(row=3, column=0)
-
-# new_budget = Button(window, text="Create Budget", width=17, command=new_budget_window)
-# new_budget.grid(row=4, column=0)
-
-# open_budget = Button(window, text="Open Budget", width=17, command=select_budget)
-# open_budget.grid(row=5, column=0)
-
-# close_program = Button(window, text="Close Program", width=17, command=window.destroy)
-# close_program.grid(row=6, column=0)
-
 
 window.mainloop()
