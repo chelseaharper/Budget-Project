@@ -34,7 +34,7 @@ def account_delete(account_id):
 def account_clear():
     conn = psycopg2.connect("dbname=budget user=postgres password=postgres")
     cur = conn.cursor()
-    cur.execute("TRUNCATE Account RESTART IDENTITY")
+    cur.execute("DELETE FROM Account")
     conn.commit()
     conn.close()
 
@@ -58,6 +58,6 @@ def user_insert(user_name):
 #     conn.close()
 
 #account_insert('Main')
-account_clear()
-content = account_view()
-print(content)
+# account_clear()
+# content = account_view()
+# print(content)

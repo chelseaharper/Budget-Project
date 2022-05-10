@@ -45,7 +45,7 @@ def item_created(item):
             cat = []
             for i in accounts[0].root_category.children:
                 cat.append(i.name)
-                BudgetDatabaseCommands.category_insert(i.name, 0, accounts[0].name)
+                #BudgetDatabaseCommands.category_insert(i.name, 0, accounts[0].name)
             categories = "\n".join(cat)
             message = item + fill_text + categories
             messagebox.showinfo(head, message)
